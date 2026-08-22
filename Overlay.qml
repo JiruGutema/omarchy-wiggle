@@ -2,7 +2,6 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick
-import QtCore
 import qs.Commons
 import "ShakeDetector.js" as Shake
 
@@ -16,18 +15,17 @@ Item {
   property real cursorX: 0
   property real cursorY: 0
 
-  Settings {
-    id: config
-    category: "WiggleFinder"
-    property int ringRadius: 60
-    property string ringColor: "#ffffff"
-    property int sensitivity: 3
-
-    onSensitivityChanged: Shake.setSensitivity(sensitivity)
-  }
+  property int ringRadius: 60
+  property string ringColor: "#ffffff"
 
   Component.onCompleted: {
-    Shake.setSensitivity(config.sensitivity)
+    ringRadius = Shake.config.ringRadius;
+    ringColor = Shake.config.ringColor;
+    
+    Shake.addListener(function() {
+      root.ringRadius = Shake.config.ringRadius;
+      root.ringColor = Shake.config.ringColor;
+    });
   }
 
   // ── Cursor position polling ──────────────────────────────────
@@ -92,12 +90,12 @@ Item {
     // The animated highlight ring
     Rectangle {
       id: highlightRing
-      width: config.ringRadius * 2
-      height: config.ringRadius * 2
-      radius: config.ringRadius
+      width: root.ringRadius * 2
+      height: root.ringRadius * 2
+      radius: root.ringRadius
       color: "transparent"
-      border.color: config.ringColor
-      border.width: Math.max(2, config.ringRadius / 15)
+      border.color: root.ringColor
+      border.width: Math.max(2, root.ringRadius / 15)
       opacity: 0
       scale: 0.3
 
@@ -134,7 +132,7 @@ Item {
         height: parent.height / 2
         radius: width / 2
         color: "transparent"
-        border.color: config.ringColor
+        border.color: root.ringColor
         border.width: 2
         opacity: 0.25
       }
@@ -147,7 +145,7 @@ Item {
         radius: width / 2
         color: "transparent"
         border.color: Qt.rgba(0, 0, 0, 0.15)
-        border.width: config.ringRadius / 6
+        border.width: root.ringRadius / 6
       }
     }
   }

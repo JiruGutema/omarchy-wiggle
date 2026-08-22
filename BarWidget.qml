@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import qs.Ui
-import QtCore
+import "ShakeDetector.js" as Shake
 
 BarWidget {
   id: root
@@ -10,12 +10,25 @@ BarWidget {
   implicitWidth: button.implicitWidth
   implicitHeight: button.implicitHeight
 
-  Settings {
-    id: config
-    category: "WiggleFinder"
-    property string ringColor: "#ffffff"
-    property int ringRadius: 60
-    property int sensitivity: 3
+  // Local state for UI
+  property int uiRadius: 60
+  property string uiColor: "#ffffff"
+  property int uiSensitivity: 3
+
+  Component.onCompleted: {
+    uiRadius = Shake.config.ringRadius;
+    uiColor = Shake.config.ringColor;
+    uiSensitivity = Shake.config.sensitivity;
+    
+    Shake.addListener(function() {
+      uiRadius = Shake.config.ringRadius;
+      uiColor = Shake.config.ringColor;
+      uiSensitivity = Shake.config.sensitivity;
+    });
+  }
+
+  function applyConfig() {
+    Shake.updateConfig(uiRadius, uiColor, uiSensitivity);
   }
 
   WidgetButton {
@@ -64,14 +77,14 @@ BarWidget {
         spacing: 5
         width: parent.width
 
-        Label { text: "Ring Radius: " + config.ringRadius + "px"; color: "#d4d4d8"; font.pixelSize: 13 }
+        Label { text: "Ring Radius: " + root.uiRadius + "px"; color: "#d4d4d8"; font.pixelSize: 13 }
         Slider {
           width: parent.width
           from: 20
           to: 150
           stepSize: 5
-          value: config.ringRadius
-          onValueChanged: config.ringRadius = value
+          value: root.uiRadius
+          onValueChanged: { root.uiRadius = value; root.applyConfig(); }
         }
       }
 
@@ -82,14 +95,14 @@ BarWidget {
         Label { text: "Color (Hex)"; color: "#d4d4d8"; font.pixelSize: 13 }
         TextField {
           width: parent.width
-          text: config.ringColor
+          text: root.uiColor
           color: "white"
           background: Rectangle {
             color: "#27272a"
             radius: 4
             border.color: "#52525b"
           }
-          onTextChanged: config.ringColor = text
+          onTextChanged: { root.uiColor = text; root.applyConfig(); }
         }
       }
 
@@ -97,15 +110,15 @@ BarWidget {
         spacing: 5
         width: parent.width
 
-        Label { text: "Shake Sensitivity: " + config.sensitivity; color: "#d4d4d8"; font.pixelSize: 13 }
+        Label { text: "Shake Sensitivity: " + root.uiSensitivity; color: "#d4d4d8"; font.pixelSize: 13 }
         Label { text: "(lower = triggers easier)"; color: "#a1a1aa"; font.pixelSize: 11 }
         Slider {
           width: parent.width
           from: 2
           to: 8
           stepSize: 1
-          value: config.sensitivity
-          onValueChanged: config.sensitivity = value
+          value: root.uiSensitivity
+          onValueChanged: { root.uiSensitivity = value; root.applyConfig(); }
         }
       }
     }
