@@ -3,8 +3,9 @@
   "id": "dev.jirehn.wiggle-finder",
   "name": "Wiggle Finder",
   "description": "Shake the mouse to find your cursor — a large highlight ring appears and fades away, just like macOS.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "kinds": ["overlay"],
+  "keepLoaded": true,
   "entryPoints": {
     "overlay": "Overlay.qml"
   }

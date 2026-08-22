@@ -1,4 +1,4 @@
-# 🎯 Omarchy Wiggle Finder
+# Omarchy Wiggle Finder
 
 A macOS-style **shake-to-find cursor** plugin for [Omarchy](https://omarchy.org/). Rapidly wiggle your mouse to make a glowing ring appear around the cursor — never lose it again on large or multi-monitor setups.
 
