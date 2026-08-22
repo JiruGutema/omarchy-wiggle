@@ -2,6 +2,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick
+import qs.Commons
 import "ShakeDetector.js" as Shake
 
 // Wiggle Finder — Shake the mouse to find your cursor.
@@ -13,11 +14,9 @@ Item {
 
   property real cursorX: 0
   property real cursorY: 0
-  property bool shakeDetected: false
 
   // ── Cursor position polling ──────────────────────────────────
 
-  // Uses plain text output "x, y" — one line per call
   Process {
     id: cursorProc
     command: ["hyprctl", "cursorpos"]
@@ -54,16 +53,17 @@ Item {
   // ── Highlight overlay ────────────────────────────────────────
 
   function triggerHighlight() {
-    shakeDetected = true
     highlightRing.opacity = 0.85
     highlightRing.scale = 0.3
     showAnimation.restart()
     fadeTimer.restart()
   }
 
+  // Keep the PanelWindow always visible so Wayland doesn't have to map/unmap it,
+  // which can drop frames or fail to show. It's completely transparent and passes input through.
   PanelWindow {
     id: overlay
-    visible: root.shakeDetected
+    visible: true
     anchors { top: true; bottom: true; left: true; right: true }
     color: "transparent"
 
@@ -85,7 +85,6 @@ Item {
       border.width: 3
       opacity: 0
       scale: 0.3
-      visible: opacity > 0
 
       // Position centered on cursor
       x: root.cursorX - width / 2
@@ -147,9 +146,6 @@ Item {
     to: 0.0
     duration: 800
     easing.type: Easing.InQuad
-    onFinished: {
-      root.shakeDetected = false
-    }
   }
 
   // Timer to start the fade-out after the ring is shown
