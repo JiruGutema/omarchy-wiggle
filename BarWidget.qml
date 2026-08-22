@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 import qs.Ui
 import Quickshell
 import Quickshell.Wayland
@@ -46,39 +47,48 @@ BarWidget {
     }
   }
 
+  ColorDialog {
+    id: colorDialog
+    title: "Choose Ring Color"
+    selectedColor: root.uiColor
+    onAccepted: { root.uiColor = selectedColor; root.applyConfig(); }
+  }
+
   PanelWindow {
     id: configPopup
     visible: root.popupOpened
     
-    // Position near the top right, under the bar
-    anchors { top: true; right: true }
-    margins {
-      top: root.bar ? root.bar.height + 5 : 40
-      right: 10
-    }
-    
-    width: 260
-    height: 310
+    // Spans the whole screen to catch clicks outside the popup
+    anchors { top: true; bottom: true; left: true; right: true }
     color: "transparent"
 
     WlrLayershell.namespace: "wiggle-finder-config"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: root.popupOpened ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    exclusionMode: ExclusionMode.Ignore
     
-    // Allow clicking outside to close
+    // Allow clicking anywhere outside the box to close
     MouseArea {
       anchors.fill: parent
       onClicked: root.popupOpened = false
     }
 
+    // The actual popup box
     Rectangle { 
-      anchors.fill: parent
+      width: 260
+      height: 310
       color: "#18181b"
-      radius: 10
+      radius: 0
       border.color: "#3f3f46" 
       border.width: 1
+      
+      // Position near top right under the bar
+      anchors.top: parent.top
+      anchors.right: parent.right
+      anchors.topMargin: root.bar ? root.bar.height + 5 : 40
+      anchors.rightMargin: 10
 
-      // Block clicks from closing the popup if they click inside the menu
+      // Block clicks inside the box from closing it
       MouseArea {
         anchors.fill: parent
         onClicked: {}
@@ -116,17 +126,20 @@ BarWidget {
           spacing: 5
           width: parent.width
 
-          Label { text: "Color (Hex)"; color: "#d4d4d8"; font.pixelSize: 13 }
-          TextField {
+          Label { text: "Ring Color"; color: "#d4d4d8"; font.pixelSize: 13 }
+          
+          Button {
             width: parent.width
-            text: root.uiColor
-            color: "white"
+            height: 30
             background: Rectangle {
-              color: "#27272a"
-              radius: 4
+              color: root.uiColor
               border.color: "#52525b"
+              border.width: 1
+              radius: 4
             }
-            onTextChanged: { root.uiColor = text; root.applyConfig(); }
+            onClicked: {
+              colorDialog.open()
+            }
           }
         }
 
