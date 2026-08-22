@@ -81,8 +81,8 @@ Item {
       height: 120
       radius: 60
       color: "transparent"
-      border.color: Qt.rgba(1, 1, 1, 0.9)
-      border.width: 3
+      border.color: Qt.rgba(1, 1, 1, 0.95)
+      border.width: 4
       opacity: 0
       scale: 0.3
 
@@ -90,26 +90,48 @@ Item {
       x: root.cursorX - width / 2
       y: root.cursorY - height / 2
 
-      // Inner glow ring
+      // Dark contrast ring immediately outside
       Rectangle {
         anchors.centerIn: parent
-        width: 80
-        height: 80
-        radius: 40
+        width: parent.width + 8
+        height: parent.height + 8
+        radius: width / 2
         color: "transparent"
-        border.color: Qt.rgba(1, 1, 1, 0.4)
+        border.color: Qt.rgba(0, 0, 0, 0.6)
+        border.width: 4
+      }
+
+      // Dark contrast ring immediately inside
+      Rectangle {
+        anchors.centerIn: parent
+        width: parent.width - 8
+        height: parent.height - 8
+        radius: width / 2
+        color: "transparent"
+        border.color: Qt.rgba(0, 0, 0, 0.6)
+        border.width: 4
+      }
+
+      // Inner soft glow (white)
+      Rectangle {
+        anchors.centerIn: parent
+        width: 60
+        height: 60
+        radius: 30
+        color: "transparent"
+        border.color: Qt.rgba(1, 1, 1, 0.25)
         border.width: 2
       }
 
-      // Outer soft glow
+      // Outer soft glow (black)
       Rectangle {
         anchors.centerIn: parent
-        width: 140
-        height: 140
-        radius: 70
+        width: 160
+        height: 160
+        radius: 80
         color: "transparent"
-        border.color: Qt.rgba(1, 1, 1, 0.15)
-        border.width: 8
+        border.color: Qt.rgba(0, 0, 0, 0.15)
+        border.width: 10
       }
     }
   }
