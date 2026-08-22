@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 import qs.Ui
+import Quickshell
+import Quickshell.Wayland
 import "ShakeDetector.js" as Shake
 
 BarWidget {
@@ -9,7 +11,8 @@ BarWidget {
 
   implicitWidth: button.implicitWidth
   implicitHeight: button.implicitHeight
-
+  
+  property bool popupOpened: false
   // Local state for UI
   property int uiRadius: 60
   property string uiColor: "#ffffff"
@@ -38,87 +41,107 @@ BarWidget {
     text: "〰️"
     onPressed: function(btn) {
       if (btn === Qt.LeftButton) {
-        if (configPopup.opened) {
-          configPopup.close()
-        } else {
-          configPopup.open()
-        }
+        root.popupOpened = !root.popupOpened;
       }
     }
   }
 
-  Popup {
+  PanelWindow {
     id: configPopup
+    visible: root.popupOpened
+    
+    // Position near the top right, under the bar
+    anchors { top: true; right: true }
+    topMargin: root.bar ? root.bar.height + 5 : 40
+    rightMargin: 10
+    
     width: 260
     height: 310
-    y: root.bar ? root.bar.height + 5 : 30
-    x: button.mapToItem(null, 0, 0).x - width/2 + button.width/2
-    padding: 15
-    background: Rectangle { 
+    color: "transparent"
+
+    WlrLayershell.namespace: "wiggle-finder-config"
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.keyboardFocus: root.popupOpened ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    
+    // Allow clicking outside to close
+    MouseArea {
+      anchors.fill: parent
+      onClicked: root.popupOpened = false
+    }
+
+    Rectangle { 
+      anchors.fill: parent
       color: "#18181b"
       radius: 10
       border.color: "#3f3f46" 
       border.width: 1
-    }
 
-    Column {
-      spacing: 20
-      anchors.fill: parent
-
-      Label { 
-        text: "Wiggle Finder"
-        color: "white"
-        font.bold: true
-        font.pixelSize: 16
-        anchors.horizontalCenter: parent.horizontalCenter
+      // Block clicks from closing the popup if they click inside the menu
+      MouseArea {
+        anchors.fill: parent
+        onClicked: {}
       }
 
       Column {
-        spacing: 5
-        width: parent.width
+        spacing: 20
+        anchors.fill: parent
+        anchors.margins: 15
 
-        Label { text: "Ring Radius: " + root.uiRadius + "px"; color: "#d4d4d8"; font.pixelSize: 13 }
-        Slider {
-          width: parent.width
-          from: 20
-          to: 150
-          stepSize: 5
-          value: root.uiRadius
-          onValueChanged: { root.uiRadius = value; root.applyConfig(); }
-        }
-      }
-
-      Column {
-        spacing: 5
-        width: parent.width
-
-        Label { text: "Color (Hex)"; color: "#d4d4d8"; font.pixelSize: 13 }
-        TextField {
-          width: parent.width
-          text: root.uiColor
+        Label { 
+          text: "Wiggle Finder"
           color: "white"
-          background: Rectangle {
-            color: "#27272a"
-            radius: 4
-            border.color: "#52525b"
-          }
-          onTextChanged: { root.uiColor = text; root.applyConfig(); }
+          font.bold: true
+          font.pixelSize: 16
+          anchors.horizontalCenter: parent.horizontalCenter
         }
-      }
 
-      Column {
-        spacing: 5
-        width: parent.width
-
-        Label { text: "Shake Sensitivity: " + root.uiSensitivity; color: "#d4d4d8"; font.pixelSize: 13 }
-        Label { text: "(lower = triggers easier)"; color: "#a1a1aa"; font.pixelSize: 11 }
-        Slider {
+        Column {
+          spacing: 5
           width: parent.width
-          from: 2
-          to: 8
-          stepSize: 1
-          value: root.uiSensitivity
-          onValueChanged: { root.uiSensitivity = value; root.applyConfig(); }
+
+          Label { text: "Ring Radius: " + root.uiRadius + "px"; color: "#d4d4d8"; font.pixelSize: 13 }
+          Slider {
+            width: parent.width
+            from: 20
+            to: 150
+            stepSize: 5
+            value: root.uiRadius
+            onValueChanged: { root.uiRadius = value; root.applyConfig(); }
+          }
+        }
+
+        Column {
+          spacing: 5
+          width: parent.width
+
+          Label { text: "Color (Hex)"; color: "#d4d4d8"; font.pixelSize: 13 }
+          TextField {
+            width: parent.width
+            text: root.uiColor
+            color: "white"
+            background: Rectangle {
+              color: "#27272a"
+              radius: 4
+              border.color: "#52525b"
+            }
+            onTextChanged: { root.uiColor = text; root.applyConfig(); }
+          }
+        }
+
+        Column {
+          spacing: 5
+          width: parent.width
+
+          Label { text: "Shake Sensitivity: " + root.uiSensitivity; color: "#d4d4d8"; font.pixelSize: 13 }
+          Label { text: "(lower = triggers easier)"; color: "#a1a1aa"; font.pixelSize: 11 }
+          Slider {
+            width: parent.width
+            from: 2
+            to: 8
+            stepSize: 1
+            value: root.uiSensitivity
+            onValueChanged: { root.uiSensitivity = value; root.applyConfig(); }
+          }
         }
       }
     }
