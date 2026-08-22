@@ -2,18 +2,16 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 import qs.Ui
-import Quickshell
-import Quickshell.Wayland
+import qs.Commons
 import "ShakeDetector.js" as Shake
 
-BarWidget {
+Panel {
   id: root
   moduleName: "dev.jirehn.wiggle-finder"
 
   implicitWidth: button.implicitWidth
   implicitHeight: button.implicitHeight
-  
-  property bool popupOpened: false
+
   // Local state for UI
   property int uiRadius: 60
   property string uiColor: "#ffffff"
@@ -41,9 +39,7 @@ BarWidget {
     bar: root.bar
     text: "〰️"
     onPressed: function(btn) {
-      if (btn === Qt.LeftButton) {
-        root.popupOpened = !root.popupOpened;
-      }
+      if (btn === Qt.LeftButton) root.toggle()
     }
   }
 
@@ -54,108 +50,101 @@ BarWidget {
     onAccepted: { root.uiColor = selectedColor; root.applyConfig(); }
   }
 
-  PanelWindow {
-    id: configPopup
-    visible: root.popupOpened
+  KeyboardPanel {
+    id: panel
+    anchorItem: button
+    owner: root
+    bar: root.bar
+    open: root.opened
     
-    // Spans the whole screen to catch clicks outside the popup
-    anchors { top: true; bottom: true; left: true; right: true }
-    color: "transparent"
+    contentWidth: panel.fittedContentWidth(Style.space(260))
+    contentHeight: panel.fittedContentHeight(mainColumn.implicitHeight)
 
-    WlrLayershell.namespace: "wiggle-finder-config"
-    WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: root.popupOpened ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
-    exclusionMode: ExclusionMode.Ignore
-    
-    // Allow clicking anywhere outside the box to close
-    MouseArea {
+    PanelKeyCatcher {
+      id: keyCatcher
       anchors.fill: parent
-      onClicked: root.popupOpened = false
-    }
-
-    // The actual popup box
-    Rectangle { 
-      width: 260
-      height: 310
-      color: "#18181b"
-      radius: 0
-      border.color: "#3f3f46" 
-      border.width: 1
+      onCloseRequested: root.close()
       
-      // Position near top right under the bar
-      anchors.top: parent.top
-      anchors.right: parent.right
-      anchors.topMargin: root.bar ? root.bar.height + 5 : 40
-      anchors.rightMargin: 10
-
-      // Block clicks inside the box from closing it
-      MouseArea {
-        anchors.fill: parent
-        onClicked: {}
-      }
-
       Column {
-        spacing: 20
-        anchors.fill: parent
-        anchors.margins: 15
-
-        Label { 
-          text: "Wiggle Finder"
-          color: "white"
-          font.bold: true
-          font.pixelSize: 16
-          anchors.horizontalCenter: parent.horizontalCenter
+        id: mainColumn
+        width: parent.width
+        spacing: Style.space(24)
+        
+        PanelSectionHeader {
+          text: "WIGGLE FINDER"
+          foreground: root.bar.foreground
+          fontFamily: root.bar.fontFamily
         }
 
         Column {
-          spacing: 5
+          spacing: Style.space(6)
           width: parent.width
 
-          Label { text: "Ring Radius: " + root.uiRadius + "px"; color: "#d4d4d8"; font.pixelSize: 13 }
-          Slider {
+          Text { 
+            text: "RING RADIUS: " + root.uiRadius + "px"
+            color: Qt.darker(root.bar.foreground, 1.2)
+            font.family: root.bar.fontFamily
+            font.pixelSize: Style.font.caption
+            font.bold: true
+          }
+          PanelSlider {
+            bar: root.bar
             width: parent.width
-            from: 20
-            to: 150
-            stepSize: 5
+            minimum: 20
+            maximum: 150
+            step: 5
             value: root.uiRadius
-            onValueChanged: { root.uiRadius = value; root.applyConfig(); }
+            onMoved: function(v) { root.uiRadius = v; root.applyConfig(); }
           }
         }
 
         Column {
-          spacing: 5
+          spacing: Style.space(6)
           width: parent.width
 
-          Label { text: "Ring Color"; color: "#d4d4d8"; font.pixelSize: 13 }
+          Text { 
+            text: "RING COLOR"
+            color: Qt.darker(root.bar.foreground, 1.2)
+            font.family: root.bar.fontFamily
+            font.pixelSize: Style.font.caption
+            font.bold: true
+          }
           
-          Button {
+          Rectangle {
             width: parent.width
-            height: 30
-            background: Rectangle {
-              color: root.uiColor
-              border.color: "#52525b"
-              border.width: 1
-              radius: 4
-            }
-            onClicked: {
-              colorDialog.open()
+            height: Style.space(32)
+            color: root.uiColor
+            border.color: Util.alpha(root.bar.foreground, 0.2)
+            border.width: 1
+            radius: Style.radius.panel
+            
+            MouseArea {
+              anchors.fill: parent
+              cursorShape: Qt.PointingHandCursor
+              onClicked: colorDialog.open()
             }
           }
         }
 
         Column {
-          spacing: 5
+          spacing: Style.space(6)
           width: parent.width
 
-          Label { text: "Shake Sensitivity: " + root.uiSensitivity; color: "#d4d4d8"; font.pixelSize: 13 }
-          Label { text: "(lower = triggers easier)"; color: "#a1a1aa"; font.pixelSize: 11 }
-          Slider {
+          Text { 
+            text: "SHAKE SENSITIVITY: " + root.uiSensitivity
+            color: Qt.darker(root.bar.foreground, 1.2)
+            font.family: root.bar.fontFamily
+            font.pixelSize: Style.font.caption
+            font.bold: true
+          }
+          PanelSlider {
+            bar: root.bar
             width: parent.width
-            from: 2
-            to: 8
-            stepSize: 1
+            minimum: 2
+            maximum: 8
+            step: 1
             value: root.uiSensitivity
-            onValueChanged: { root.uiSensitivity = value; root.applyConfig(); }
+            onMoved: function(v) { root.uiSensitivity = v; root.applyConfig(); }
           }
         }
       }
