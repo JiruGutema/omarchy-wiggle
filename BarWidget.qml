@@ -52,8 +52,10 @@ BarWidget {
     
     // Position near the top right, under the bar
     anchors { top: true; right: true }
-    topMargin: root.bar ? root.bar.height + 5 : 40
-    rightMargin: 10
+    margins {
+      top: root.bar ? root.bar.height + 5 : 40
+      right: 10
+    }
     
     width: 260
     height: 310
