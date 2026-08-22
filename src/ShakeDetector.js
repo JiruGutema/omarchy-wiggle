@@ -1,8 +1,5 @@
-// ShakeDetector.js — Direction-reversal shake detection algorithm
-
 .pragma library
 
-// State
 var _samples = [];
 var _lastDx = 0;
 var _lastX = -1;
@@ -11,7 +8,6 @@ var _reversals = [];
 var _lastTriggerTime = 0;
 var _initialized = false;
 
-// Shared Configuration
 var config = {
     ringRadius: 60,
     ringColor: "#ffffff",
@@ -45,7 +41,6 @@ function reset() {
     _initialized = false;
 }
 
-// Feed a new cursor position sample
 function addSample(x, y) {
     var now = Date.now();
 

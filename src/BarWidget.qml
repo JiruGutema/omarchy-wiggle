@@ -12,7 +12,6 @@ Panel {
   implicitWidth: button.implicitWidth
   implicitHeight: button.implicitHeight
 
-  // Local state for UI
   property int uiRadius: 60
   property string uiColor: "#ffffff"
   property int uiSensitivity: 3
@@ -37,7 +36,8 @@ Panel {
     id: button
     anchors.fill: parent
     bar: root.bar
-    text: "〰️"
+    text: "◎"
+    textFormat: Text.PlainText
     onPressed: function(btn) {
       if (btn === Qt.LeftButton) root.toggle()
     }
@@ -116,7 +116,7 @@ Panel {
             color: root.uiColor
             border.color: Util.alpha(root.bar.foreground, 0.2)
             border.width: 1
-            radius: Style.radius.panel
+            radius: 4
             
             MouseArea {
               anchors.fill: parent

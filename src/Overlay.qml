@@ -5,10 +5,6 @@ import QtQuick
 import qs.Commons
 import "ShakeDetector.js" as Shake
 
-// Wiggle Finder — Shake the mouse to find your cursor.
-// A transparent fullscreen overlay that shows a highlight ring
-// when rapid mouse shaking is detected.
-
 Item {
   id: root
 
@@ -27,8 +23,6 @@ Item {
       root.ringColor = Shake.config.ringColor;
     });
   }
-
-  // ── Cursor position polling ──────────────────────────────────
 
   Process {
     id: cursorProc
@@ -52,7 +46,6 @@ Item {
     }
   }
 
-  // Poll cursor position at ~60fps
   Timer {
     id: pollTimer
     interval: 16
@@ -63,8 +56,6 @@ Item {
     }
   }
 
-  // ── Highlight overlay ────────────────────────────────────────
-
   function triggerHighlight() {
     highlightRing.opacity = 0.85
     highlightRing.scale = 0.3
@@ -72,8 +63,6 @@ Item {
     fadeTimer.restart()
   }
 
-  // Keep the PanelWindow always visible so Wayland doesn't have to map/unmap it,
-  // which can drop frames or fail to show. It's completely transparent and passes input through.
   PanelWindow {
     id: overlay
     visible: true
@@ -84,10 +73,8 @@ Item {
     WlrLayershell.layer: WlrLayer.Overlay
     exclusionMode: ExclusionMode.Ignore
 
-    // Empty mask = entire surface passes input through
     mask: Region {}
 
-    // The animated highlight ring
     Rectangle {
       id: highlightRing
       width: root.ringRadius * 2
@@ -99,11 +86,9 @@ Item {
       opacity: 0
       scale: 0.3
 
-      // Position centered on cursor
       x: root.cursorX - width / 2
       y: root.cursorY - height / 2
 
-      // Dark contrast ring immediately outside
       Rectangle {
         anchors.centerIn: parent
         width: parent.width + border.width * 2
@@ -114,7 +99,6 @@ Item {
         border.width: parent.border.width
       }
 
-      // Dark contrast ring immediately inside
       Rectangle {
         anchors.centerIn: parent
         width: parent.width - border.width * 2
@@ -125,7 +109,6 @@ Item {
         border.width: parent.border.width
       }
 
-      // Inner soft glow
       Rectangle {
         anchors.centerIn: parent
         width: parent.width / 2
@@ -137,7 +120,6 @@ Item {
         opacity: 0.25
       }
 
-      // Outer soft glow (black)
       Rectangle {
         anchors.centerIn: parent
         width: parent.width * 1.3
@@ -150,7 +132,6 @@ Item {
     }
   }
 
-  // Scale-up + fade-in animation
   ParallelAnimation {
     id: showAnimation
 
@@ -173,7 +154,6 @@ Item {
     }
   }
 
-  // Fade-out animation
   NumberAnimation {
     id: fadeAnimation
     target: highlightRing
@@ -184,7 +164,6 @@ Item {
     easing.type: Easing.InQuad
   }
 
-  // Timer to start the fade-out after the ring is shown
   Timer {
     id: fadeTimer
     interval: 700
