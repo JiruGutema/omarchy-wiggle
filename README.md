@@ -1,20 +1,12 @@
 # Omarchy Wiggle Finder
 
-A macOS-style **shake-to-find cursor** plugin for [Omarchy](https://omarchy.org/). Rapidly wiggle your mouse to make a glowing ring appear around the cursor — never lose it again on large or multi-monitor setups.
+A macOS-style **shake-to-find cursor** plugin for [Omarchy](https://omarchy.org/). Rapidly wiggle your mouse to make a customizable ring appear around the cursor — never lose it again on large or multi-monitor setups.
 
 ## How It Works
 
-When you shake your mouse back and forth quickly, a highlight ring pops up around the cursor and gracefully fades away after ~1.5 seconds.
+When you shake your mouse back and forth quickly, a highlight ring pops up around the cursor and gracefully fades away. 
 
 The plugin runs as a transparent, input-passthrough overlay — it **never blocks your clicks** or interferes with your workflow.
-
-### Detection Algorithm
-
-- Tracks cursor position at ~60fps via Hyprland IPC
-- Counts rapid horizontal direction reversals (left→right→left)
-- Triggers when **≥3 reversals** occur within **500ms** with sufficient travel distance
-- Filters out jitter and normal mouse movement
-- 2-second cooldown between triggers
 
 ## Installation
 
@@ -28,37 +20,48 @@ omarchy plugin validate ~/.config/omarchy/plugins/wiggle-finder/
 # Enable it
 omarchy plugin enable dev.jirehn.wiggle-finder
 
+# Add the settings widget to your bar layout (optional)
+# Edit ~/.config/omarchy/shell.json and add {"id": "dev.jirehn.wiggle-finder"} to your bar layout
+
 # Restart the shell
 omarchy restart shell
 ```
 
-## Usage
+## Configuration
 
-Just **shake your mouse rapidly** back and forth. A white glowing ring will appear around your cursor and fade out.
+The plugin includes a convenient top-bar widget (◎) for quick tuning. Click it to adjust:
+- **Ring Radius:** Size of the highlight ring.
+- **Ring Color:** Click the color preview to open a native color picker.
+- **Shake Sensitivity:** Number of direction changes needed to trigger (lower = triggers easier).
 
-That's it. No configuration needed.
+All settings take effect instantly.
 
-## Tuning
+## Uninstallation / Removal
 
-If you want to adjust sensitivity, edit `ShakeDetector.js`:
+To completely remove the plugin from your system:
 
-| Constant | Default | Effect |
-|---|---|---|
-| `WINDOW_MS` | `500` | Time window for counting reversals (ms) |
-| `MIN_REVERSALS` | `3` | Direction changes needed to trigger |
-| `MIN_DELTA_PX` | `20` | Minimum travel between reversals — filters jitter (px) |
-| `COOLDOWN_MS` | `2000` | Cooldown between triggers (ms) |
+```bash
+# 1. Disable the plugin
+omarchy plugin disable dev.jirehn.wiggle-finder
 
-**More sensitive:** Lower `MIN_REVERSALS` to `2` or `MIN_DELTA_PX` to `15`.  
-**Less sensitive:** Raise `MIN_REVERSALS` to `4` or `MIN_DELTA_PX` to `30`.
+# 2. Remove the plugin files
+rm -rf ~/.config/omarchy/plugins/wiggle-finder/
+
+# 3. Restart the shell
+omarchy restart shell
+```
+
+*Note: If you manually added the settings widget to your `~/.config/omarchy/shell.json` bar layout, you should also remove the `{"id": "dev.jirehn.wiggle-finder"}` entry from your config file.*
 
 ## Plugin Structure
 
 ```
 wiggle-finder/
-├── manifest.json         # Plugin manifest (overlay type)
-├── Overlay.qml           # Transparent fullscreen overlay + highlight animation
-└── ShakeDetector.js      # Shake detection algorithm
+├── manifest.json         # Plugin manifest (overlay & bar-widget)
+└── src/
+    ├── Overlay.qml       # Transparent fullscreen overlay + highlight animation
+    ├── BarWidget.qml     # Top-bar settings widget UI
+    └── ShakeDetector.js  # Shake detection algorithm
 ```
 
 ## Requirements
