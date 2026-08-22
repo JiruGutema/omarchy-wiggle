@@ -18,6 +18,10 @@ var _reversals = [];        // Array of timestamps when reversals occurred
 var _lastTriggerTime = 0;   // Timestamp of last shake trigger
 var _initialized = false;
 
+function setSensitivity(val) {
+    MIN_REVERSALS = val;
+}
+
 function reset() {
     _samples = [];
     _lastDx = 0;

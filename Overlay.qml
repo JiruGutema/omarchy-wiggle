@@ -2,6 +2,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick
+import QtCore
 import qs.Commons
 import "ShakeDetector.js" as Shake
 
@@ -14,6 +15,20 @@ Item {
 
   property real cursorX: 0
   property real cursorY: 0
+
+  Settings {
+    id: config
+    category: "WiggleFinder"
+    property int ringRadius: 60
+    property string ringColor: "#ffffff"
+    property int sensitivity: 3
+
+    onSensitivityChanged: Shake.setSensitivity(sensitivity)
+  }
+
+  Component.onCompleted: {
+    Shake.setSensitivity(config.sensitivity)
+  }
 
   // ── Cursor position polling ──────────────────────────────────
 
@@ -77,12 +92,12 @@ Item {
     // The animated highlight ring
     Rectangle {
       id: highlightRing
-      width: 120
-      height: 120
-      radius: 60
+      width: config.ringRadius * 2
+      height: config.ringRadius * 2
+      radius: config.ringRadius
       color: "transparent"
-      border.color: Qt.rgba(1, 1, 1, 0.95)
-      border.width: 4
+      border.color: config.ringColor
+      border.width: Math.max(2, config.ringRadius / 15)
       opacity: 0
       scale: 0.3
 
@@ -93,45 +108,46 @@ Item {
       // Dark contrast ring immediately outside
       Rectangle {
         anchors.centerIn: parent
-        width: parent.width + 8
-        height: parent.height + 8
+        width: parent.width + border.width * 2
+        height: parent.height + border.width * 2
         radius: width / 2
         color: "transparent"
         border.color: Qt.rgba(0, 0, 0, 0.6)
-        border.width: 4
+        border.width: parent.border.width
       }
 
       // Dark contrast ring immediately inside
       Rectangle {
         anchors.centerIn: parent
-        width: parent.width - 8
-        height: parent.height - 8
+        width: parent.width - border.width * 2
+        height: parent.height - border.width * 2
         radius: width / 2
         color: "transparent"
         border.color: Qt.rgba(0, 0, 0, 0.6)
-        border.width: 4
+        border.width: parent.border.width
       }
 
-      // Inner soft glow (white)
+      // Inner soft glow
       Rectangle {
         anchors.centerIn: parent
-        width: 60
-        height: 60
-        radius: 30
+        width: parent.width / 2
+        height: parent.height / 2
+        radius: width / 2
         color: "transparent"
-        border.color: Qt.rgba(1, 1, 1, 0.25)
+        border.color: config.ringColor
         border.width: 2
+        opacity: 0.25
       }
 
       // Outer soft glow (black)
       Rectangle {
         anchors.centerIn: parent
-        width: 160
-        height: 160
-        radius: 80
+        width: parent.width * 1.3
+        height: parent.height * 1.3
+        radius: width / 2
         color: "transparent"
         border.color: Qt.rgba(0, 0, 0, 0.15)
-        border.width: 10
+        border.width: config.ringRadius / 6
       }
     }
   }
