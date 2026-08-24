@@ -20,7 +20,7 @@ codebase.
 **Omarchy** — see [omarchy/README.md](omarchy/README.md):
 
 ```bash
-git clone git@github.com:JiruGutema/omarchy-wiggle.git
+git clone git@github.com:JiruGutema/wiggle-finder.git
 cd omarchy-wiggle
 ./omarchy/install.sh
 ```
@@ -28,7 +28,7 @@ cd omarchy-wiggle
 **GNOME** — see [gnome/README.md](gnome/README.md):
 
 ```bash
-git clone git@github.com:JiruGutema/omarchy-wiggle.git
+git clone git@github.com:JiruGutema/wiggle-finder.git
 cd omarchy-wiggle
 ./gnome/install.sh
 # then log out and back in, and:
