@@ -1,73 +1,69 @@
-# Omarchy Wiggle Finder
+# Wiggle Finder
 
-A macOS-style **shake-to-find cursor** plugin for [Omarchy](https://omarchy.org/). Rapidly wiggle your mouse to make a customizable ring appear around the cursor — never lose it again on large or multi-monitor setups.
+A macOS-style **shake-to-find cursor**. Rapidly wiggle your mouse and a
+customizable ring appears around the cursor, then fades away — never lose it
+again on large or multi-monitor setups.
 
-## How It Works
+The overlay is transparent and input-passthrough. It **never blocks your
+clicks** or interferes with your workflow.
 
-When you shake your mouse back and forth quickly, a highlight ring pops up around the cursor and gracefully fades away. 
+Two implementations live here, one per desktop. They share a design, not a
+codebase.
 
-The plugin runs as a transparent, input-passthrough overlay — it **never blocks your clicks** or interferes with your workflow.
+| Desktop | Folder | Status |
+|---------|--------|--------|
+| [Omarchy](https://omarchy.org/) 4.0+ (Hyprland) | [`omarchy/`](omarchy/) | Original implementation — Quickshell / QML |
+| GNOME Shell 45–48 | [`gnome/`](gnome/) | Full port — GJS extension, verified on GNOME 46 |
 
-## Installation
+## Install
 
-```bash
-# Clone the plugin into your Omarchy plugins directory
-git clone git@github.com:JiruGutema/omarchy-wiggle.git ~/.config/omarchy/plugins/wiggle-finder
-
-# Validate the plugin
-omarchy plugin validate ~/.config/omarchy/plugins/wiggle-finder/
-
-# Enable it
-omarchy plugin enable dev.jirehn.wiggle-finder
-
-# Add the settings widget to your bar layout (optional)
-# Edit ~/.config/omarchy/shell.json and add {"id": "dev.jirehn.wiggle-finder"} to your bar layout
-
-# Restart the shell
-omarchy restart shell
-```
-
-## Configuration
-
-The plugin includes a convenient top-bar widget (◎) for quick tuning. Click it to adjust:
-- **Ring Radius:** Size of the highlight ring.
-- **Ring Color:** Click the color preview to open a native color picker.
-- **Shake Sensitivity:** Number of direction changes needed to trigger (lower = triggers easier).
-
-All settings take effect instantly.
-
-## Uninstallation / Removal
-
-To completely remove the plugin from your system:
+**Omarchy** — see [omarchy/README.md](omarchy/README.md):
 
 ```bash
-# 1. Disable the plugin
-omarchy plugin disable dev.jirehn.wiggle-finder
-
-# 2. Remove the plugin files
-rm -rf ~/.config/omarchy/plugins/wiggle-finder/
-
-# 3. Restart the shell
-omarchy restart shell
+git clone git@github.com:JiruGutema/omarchy-wiggle.git
+cd omarchy-wiggle
+./omarchy/install.sh
 ```
 
-*Note: If you manually added the settings widget to your `~/.config/omarchy/shell.json` bar layout, you should also remove the `{"id": "dev.jirehn.wiggle-finder"}` entry from your config file.*
+**GNOME** — see [gnome/README.md](gnome/README.md):
 
-## Plugin Structure
-
-```
-wiggle-finder/
-├── manifest.json         # Plugin manifest (overlay & bar-widget)
-└── src/
-    ├── Overlay.qml       # Transparent fullscreen overlay + highlight animation
-    ├── BarWidget.qml     # Top-bar settings widget UI
-    └── ShakeDetector.js  # Shake detection algorithm
+```bash
+git clone git@github.com:JiruGutema/omarchy-wiggle.git
+cd omarchy-wiggle
+./gnome/install.sh
+# then log out and back in, and:
+gnome-extensions enable wiggle-finder@jirehn.dev
 ```
 
-## Requirements
+> The Omarchy plugin lives in `omarchy/` rather than at the repo root, so the
+> Omarchy plugins directory cannot just be a clone of this repo. `install.sh`
+> puts the right folder in the right place.
 
-- [Omarchy](https://omarchy.org/) 4.0+ (Quattro)
-- Hyprland (ships with Omarchy)
+## Configure
+
+Both versions expose ring radius, ring color and shake sensitivity, applied
+instantly.
+
+- **Omarchy:** a top-bar widget (◎). Settings are held in memory.
+- **GNOME:** `gnome-extensions prefs wiggle-finder@jirehn.dev`. Settings persist
+  in GSettings, and the detection timings are exposed too.
+
+## The two differ in one way that matters
+
+The Omarchy `ShakeDetector.js` inspects the **X axis only** — it takes `(x, y)`
+and never reads `y`, so a purely vertical shake never triggers it.
+
+The GNOME version replaced this with direction-agnostic detection that
+accumulates turning angle over the recent pointer track, so horizontal, vertical
+and diagonal shakes all work. That algorithm is plain JavaScript with no GNOME
+dependencies, so porting it back to Omarchy would be straightforward.
+
+## Structure
+
+```
+omarchy/          Omarchy plugin (Quickshell/QML, Hyprland)
+gnome/            GNOME Shell extension (GJS)
+```
 
 ## License
 

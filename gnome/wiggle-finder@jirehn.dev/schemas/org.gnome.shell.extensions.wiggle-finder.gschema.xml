@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.wiggle-finder"
+          path="/org/gnome/shell/extensions/wiggle-finder/">
+
+    <key name="ring-radius" type="i">
+      <default>60</default>
+      <range min="20" max="150"/>
+      <summary>Ring radius</summary>
+      <description>Radius of the highlight ring, in pixels.</description>
+    </key>
+
+    <key name="ring-color" type="s">
+      <default>'#ffffff'</default>
+      <summary>Ring color</summary>
+      <description>Hex color of the highlight ring, e.g. #ffffff.</description>
+    </key>
+
+    <key name="sensitivity" type="i">
+      <default>3</default>
+      <range min="2" max="8"/>
+      <summary>Shake sensitivity</summary>
+      <description>How many back-and-forth reversals of turning the shake must add up to. Lower triggers more easily.</description>
+    </key>
+
+    <key name="shake-window" type="i">
+      <default>500</default>
+      <range min="200" max="1500"/>
+      <summary>Shake window</summary>
+      <description>How much of the recent pointer track counts toward a shake, in milliseconds.</description>
+    </key>
+
+    <key name="min-travel" type="i">
+      <default>20</default>
+      <range min="5" max="100"/>
+      <summary>Minimum speed</summary>
+      <description>Distance the pointer must cover between two consecutive samples, in pixels. This is what separates a shake from slow scribbling.</description>
+    </key>
+
+    <key name="cooldown" type="i">
+      <default>2000</default>
+      <range min="0" max="5000"/>
+      <summary>Cooldown</summary>
+      <description>Quiet period after a trigger before another shake can fire, in milliseconds.</description>
+    </key>
+
+    <key name="poll-interval" type="i">
+      <default>16</default>
+      <range min="8" max="100"/>
+      <summary>Pointer poll interval</summary>
+      <description>How often the pointer position is sampled, in milliseconds.</description>
+    </key>
+
+  </schema>
+</schemalist>
