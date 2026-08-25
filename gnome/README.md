@@ -101,9 +101,16 @@ Changes apply instantly — no restart.
 ## Develop
 
 ```bash
-gjs -m test/shakeDetector.test.js      # unit tests for the detection algorithm
-./pack.sh                              # build a zip for extensions.gnome.org
-journalctl -f -o cat /usr/bin/gnome-shell   # watch for runtime errors
+gjs -m test/shakeDetector.test.js           # unit tests for the detection algorithm
+./pack.sh                                   # build a zip for extensions.gnome.org
+journalctl --user -f -o cat /usr/bin/gnome-shell   # watch for runtime errors
+```
+
+Lint the bundle against the extensions.gnome.org review rules before publishing:
+
+```bash
+python3 -m venv venv && . venv/bin/activate && pip install -U shexli
+./pack.sh && shexli dist/wiggle-finder@jirehn.dev.shell-extension.zip
 ```
 
 ## Layout

@@ -27,7 +27,6 @@ export default class WiggleFinderExtension extends Extension {
         this._cursorTracker = getCursorTracker();
         this._pointerWatcher = getPointerWatcher();
         this._watch = null;
-        this._settingsIds = [];
 
         this._settings = this.getSettings();
         this._bindSettings();
@@ -35,10 +34,7 @@ export default class WiggleFinderExtension extends Extension {
 
     disable() {
         this._removeWatch();
-
-        for (const id of this._settingsIds ?? [])
-            this._settings.disconnect(id);
-        this._settingsIds = null;
+        this._settings.disconnectObject(this);
 
         this._ring?.destroy();
         this._ring = null;
@@ -69,8 +65,8 @@ export default class WiggleFinderExtension extends Extension {
                 : this._settings.get_int(key);
 
             apply(read());
-            this._settingsIds.push(
-                this._settings.connect(`changed::${key}`, () => apply(read())));
+            this._settings.connectObject(
+                `changed::${key}`, () => apply(read()), this);
         }
     }
 

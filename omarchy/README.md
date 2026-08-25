@@ -18,8 +18,8 @@ The plugin lives in this subdirectory, not at the repo root, so Omarchy's plugin
 directory cannot simply be a clone of this repo — it needs *this folder*.
 
 ```bash
-git clone git@github.com:JiruGutema/omarchy-wiggle.git
-cd omarchy-wiggle
+git clone git@github.com:JiruGutema/wiggle-finder.git
+cd wiggle-finder
 ./omarchy/install.sh
 ```
 

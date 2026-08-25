@@ -21,7 +21,7 @@ codebase.
 
 ```bash
 git clone git@github.com:JiruGutema/wiggle-finder.git
-cd omarchy-wiggle
+cd wiggle-finder
 ./omarchy/install.sh
 ```
 
@@ -29,7 +29,7 @@ cd omarchy-wiggle
 
 ```bash
 git clone git@github.com:JiruGutema/wiggle-finder.git
-cd omarchy-wiggle
+cd wiggle-finder
 ./gnome/install.sh
 # then log out and back in, and:
 gnome-extensions enable wiggle-finder@jirehn.dev

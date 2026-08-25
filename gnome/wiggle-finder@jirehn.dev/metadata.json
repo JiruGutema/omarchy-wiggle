@@ -5,5 +5,5 @@
   "version": 1,
   "shell-version": ["45", "46", "47", "48"],
   "settings-schema": "org.gnome.shell.extensions.wiggle-finder",
-  "url": "https://github.com/JiruGutema/omarchy-wiggle"
+  "url": "https://github.com/JiruGutema/wiggle-finder"
 }
