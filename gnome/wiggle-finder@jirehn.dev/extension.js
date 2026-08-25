@@ -11,7 +11,13 @@ import ShakeDetector from './shakeDetector.js';
 
 const POLL_INTERVAL_KEY = 'poll-interval';
 
-/** The cursor tracker moved onto the backend in newer shells. */
+/**
+ * Both branches are load-bearing, not defensive. mutter 48 removed
+ * `MetaCursorTracker.get_for_display()` in the same cycle it added
+ * `MetaBackend.get_cursor_tracker()`. So `global.backend` is the only working
+ * path on 48-50, and `Meta.CursorTracker` the only one on 45-47. Do not
+ * collapse this to a single call.
+ */
 function getCursorTracker() {
     if (global.backend?.get_cursor_tracker)
         return global.backend.get_cursor_tracker();

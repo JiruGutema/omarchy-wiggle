@@ -13,7 +13,7 @@ codebase.
 | Desktop | Folder | Status |
 |---------|--------|--------|
 | [Omarchy](https://omarchy.org/) 4.0+ (Hyprland) | [`omarchy/`](omarchy/) | Original implementation — Quickshell / QML |
-| GNOME Shell 45–48 | [`gnome/`](gnome/) | Full port — GJS extension, verified on GNOME 46 |
+| GNOME Shell 45–50 | [`gnome/`](gnome/) | Full port — GJS extension, verified on GNOME 46 |
 
 ## Install
 

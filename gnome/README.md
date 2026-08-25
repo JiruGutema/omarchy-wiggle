@@ -56,8 +56,10 @@ first version of `shakeDetector.js` is a line-for-line translation of
 
 ## Requirements
 
-- GNOME Shell 45–48 (developed and verified against 46)
-- X11 or Wayland
+- GNOME Shell 45–50. Developed and verified against 46; 47–50 were audited
+  against upstream API changes rather than run.
+- Wayland. X11 also works on GNOME 45–49 — [GNOME 50 removed the X11
+  session](https://release.gnome.org/50/) entirely.
 
 ## Install
 
@@ -65,8 +67,9 @@ first version of `shakeDetector.js` is a line-for-line translation of
 ./install.sh
 ```
 
-Then, because Wayland cannot reload the shell in place, log out and back in
-(on X11: <kbd>Alt</kbd>+<kbd>F2</kbd>, `r`, <kbd>Enter</kbd>), and enable it:
+Then, because Wayland cannot reload the shell in place, log out and back in,
+and enable it. (On an X11 session — GNOME 49 and earlier — you can reload the
+shell instead: <kbd>Alt</kbd>+<kbd>F2</kbd>, `r`, <kbd>Enter</kbd>.)
 
 ```bash
 gnome-extensions enable wiggle-finder@jirehn.dev

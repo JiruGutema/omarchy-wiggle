@@ -3,7 +3,7 @@
   "name": "Wiggle Finder",
   "description": "Shake the mouse to find your cursor — a large highlight ring appears around the pointer and fades away, just like macOS.",
   "version": 1,
-  "shell-version": ["45", "46", "47", "48"],
+  "shell-version": ["45", "46", "47", "48", "49", "50"],
   "settings-schema": "org.gnome.shell.extensions.wiggle-finder",
   "url": "https://github.com/JiruGutema/wiggle-finder"
 }
